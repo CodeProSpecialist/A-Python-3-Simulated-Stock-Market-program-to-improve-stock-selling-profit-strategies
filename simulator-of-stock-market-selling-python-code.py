@@ -1,10 +1,10 @@
 import random
 from datetime import datetime, timezone, timedelta
 import time
-import pytz  # Import pytz for timezone handling
+import pytz
 
 # Initialize the initial stock price, max price increase, cash available, bought price, and shares owned
-stock_price = 33.22
+stock_price = 32.92
 max_price_increase = 0
 cash_available = 35000  # Start with $35,000 in cash
 bought_price = 32.75  # Initial bought price
@@ -39,7 +39,7 @@ def simulate_price_change(current_price):
 
 # Define a function to simulate the opening price (fixed)
 def simulate_opening_price():
-    return 33.22  # Fixed opening price for " VST"
+    return 32.92  # Fixed opening price for "VST"
 
 # Define a function to simulate the closing price (fixed)
 def simulate_closing_price():
@@ -47,6 +47,9 @@ def simulate_closing_price():
 
 # Define a function to buy as many shares as possible with available cash
 def buy_all_available_shares(opening_price, current_price, cash_available):
+    if cash_available <= 0:
+        return 0, cash_available
+
     # Calculate the maximum number of shares that can be bought with available cash
     max_shares = cash_available // current_price
 
