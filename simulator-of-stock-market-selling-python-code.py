@@ -3,14 +3,16 @@ from datetime import datetime, timezone, timedelta
 import time
 import pytz
 
-global shares_owned
-
 # Initialize the initial stock price, max price increase, cash available, bought price, and shares owned
-stock_price = 32.88
+stock_price = 33.08
 max_price_increase = 0
-cash_available = 36663.98  # Start with $36,663.98 in cash
-bought_price = 32.88  # Initial bought price
-shares_owned = 0  # Start with 0 shares
+cash_available = 37449.57  # Start with $37,449.57 in cash
+bought_price = 33.08  # Initial bought price
+shares_owned = 1132.0  # Start with 1,132 shares
+
+# Initialize variables to keep track of shares bought and sold
+shares_bought = 0
+shares_sold = 0
 
 # Open a text file for logging buy and sell signals
 log_file = open("log-file-of-buy-and-sell-signals.txt", "a")
@@ -21,9 +23,17 @@ def log_signal(signal, price, shares, cash):
     now = datetime.now(pytz.timezone('US/Eastern'))
     current_time_str = now.strftime("Eastern Time | %I:%M:%S %p | %m-%d-%Y |")
 
+    # Calculate the change in the number of shares owned
+    shares_change = shares_owned - shares
+
     # Log the signal with the current time, cash balance, and ownership details
-    log_message = f"{current_time_str} {signal} {shares} VST at {price:.2f} | Cash Available: {cash:.2f} | Owned: {shares_owned} shares valued at ${shares_owned * price:.2f}\n"
+    log_message = f"{current_time_str} {signal} {shares_change} VST at {price:.2f} | Cash Available: {cash:.2f} | Owned: {shares_owned} shares valued at ${shares_owned * price:.2f}\n"
     log_file.write(log_message)
+
+    # Reset the number of shares bought and sold to 0 after logging
+    global shares_bought, shares_sold
+    shares_bought = 0
+    shares_sold = 0
 
 # Define a function to update the number of shares owned and their value
 def update_shares_value():
@@ -41,7 +51,7 @@ def simulate_price_change(current_price):
 
 # Define a function to simulate the opening price (fixed)
 def simulate_opening_price():
-    return 32.88  # Fixed opening price for "VST"
+    return 33.08  # Fixed opening price for "VST"
 
 # Define a function to simulate the closing price (fixed)
 def simulate_closing_price():
@@ -59,8 +69,9 @@ def buy_all_available_shares(opening_price, current_price, cash_available):
     if max_shares > 0 and current_price <= opening_price:
         cash_spent = max_shares * current_price  # Calculate the total cost
         cash_available -= cash_spent  # Deduct the purchase cost
-        global shares_owned
+        global shares_owned, shares_bought
         shares_owned += max_shares  # Update the number of shares owned
+        shares_bought += max_shares  # Update the number of shares bought
         return max_shares, cash_available  # Return updated values
     else:
         return 0, cash_available  # Return 0 shares and unchanged cash
@@ -76,9 +87,10 @@ def sell_all_shares(opening_price, current_price, shares_owned, cash_available):
     if (current_price >= bought_price * 1.01) and shares_owned > 0:
         cash_gained = shares_owned * current_price  # Calculate the selling proceeds
         cash_available += cash_gained  # Add the selling proceeds to cash
-
+        global shares_owned, shares_sold
+        shares_sold += shares_owned  # Update the number of shares sold
         shares_owned = 0  # Set shares owned to 0 after selling all shares
-        log_signal("Sold", current_price, shares_owned, cash_available)
+        log_signal("Sold", current_price, shares_sold, cash_available)
     return shares_owned, cash_available
 
 # Main program loop
@@ -94,7 +106,7 @@ while True:  # Infinite loop
     now = datetime.now(pytz.timezone('US/Eastern'))
     current_time_str = now.strftime("Eastern Time | %I:%M:%S %p | %m-%d-%Y |")
 
-    # Print current time
+    # Print current time and date
     print(current_time_str)
 
     # Print current price and cash available with neat separation
@@ -111,7 +123,7 @@ while True:  # Infinite loop
 
     if bought_shares > 0:
         bought_price = stock_price
-        log_signal("Bought", bought_price, bought_shares, cash_available)
+        log_signal("Bought", bought_price, shares_bought, cash_available)
 
     # Sell all shares if conditions are met
     shares_owned, cash_available = sell_all_shares(opening_price, stock_price, shares_owned, cash_available)
