@@ -2,10 +2,11 @@ import random
 from datetime import datetime
 import time
 
-# Initialize the initial stock price, max price increase, and cash available
+# Initialize the initial stock price, max price increase, cash available, and bought price
 stock_price = 33.22
 max_price_increase = 0
-cash_available = 10000  # Replace with your actual cash value
+cash_available = 35000  # Replace with your actual cash value
+bought_price = 33.17  # Initial bought price
 
 # Open a text file for logging buy and sell signals
 log_file = open("log-file-of-buy-and-sell-signals.txt", "a")
