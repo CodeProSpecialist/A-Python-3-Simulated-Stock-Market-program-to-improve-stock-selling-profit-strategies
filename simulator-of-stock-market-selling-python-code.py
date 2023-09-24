@@ -88,8 +88,8 @@ def sell_all_shares(opening_price, current_price, shares_owned, cash_available):
     # Calculate the maximum price increase since purchase
     max_price_increase = max(max_price_increase, current_price - bought_price)
 
-    # Condition 1: Sell when the price increases by 1% or more than the bought price
-    if (current_price >= bought_price * 1.01) and shares_owned > 0:
+    # Condition 1: Sell when the price increases by 0.3% or more than the bought price
+    if (current_price >= bought_price * 1.003) and shares_owned > 0:
         cash_gained = shares_owned * current_price  # Calculate the selling proceeds
         cash_available += cash_gained  # Add the selling proceeds to cash
 
