@@ -1,5 +1,5 @@
 import random
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import time
 
 # Initialize the initial stock price, max price increase, cash available, bought price, and shares owned
@@ -14,7 +14,7 @@ log_file = open("log-file-of-buy-and-sell-signals.txt", "a")
 
 # Define a function to log buy and sell signals
 def log_signal(signal, price, shares):
-    timestamp = datetime.now().strftime("%Y-%m-%d")
+    timestamp = datetime.now().strftime("%Y-%m-%d %I:%M %p %Z")
     log_file.write(f"{timestamp}: {signal} {shares} VST at {price:.2f}\n")
 
 # Define a function to simulate a change in stock price
@@ -60,7 +60,7 @@ def sell_all_shares(opening_price, current_price, shares_owned, cash_available):
     if (current_price >= bought_price * 1.01) and shares_owned > 0:
         cash_available += shares_owned * current_price  # Add the selling proceeds to cash
         log_signal("Sold", current_price, shares_owned)
-        print(f"Sold {shares_owned} shares of VST at {current_price:.2f} each on {datetime.now().strftime('%Y-%m-%d')}")
+        print(f"Sold {shares_owned} shares of VST at {current_price:.2f} each on {datetime.now().strftime('%Y-%m-%d %I:%M %p %Z')}")
         shares_owned = 0  # Set shares owned to 0 after selling all shares
 
     return shares_owned, cash_available
@@ -71,8 +71,17 @@ while True:  # Infinite loop
     opening_price = simulate_opening_price()
     closing_price = simulate_closing_price()
 
-    # Print current price and cash available
+    # Print separation line
+    print("----------------------------------------------------------------------------------------------------------------------------")
+
+    # Print local time in Eastern time zone
+    eastern_time = datetime.now(timezone.utc) + timedelta(hours=-5)  # Eastern time is UTC-5
+    print(f"Eastern Time: {eastern_time.strftime('%I:%M %p')}")
+
+    # Print current price and cash available with neat separation
+    print("----------------------------------------------------------------------------------------------------------------------------")
     print(f"Current Price of VST: {stock_price:.2f}     |     Cash Available: {cash_available:.2f}")
+    print("----------------------------------------------------------------------------------------------------------------------------")
     print(f"Currently own {shares_owned} shares of VST valued at ${(shares_owned * stock_price):.2f}")
 
     # Buy up to 50 shares if conditions are met
@@ -81,7 +90,7 @@ while True:  # Infinite loop
     if bought_shares > 0:
         bought_price = stock_price
         log_signal("Bought", bought_price, bought_shares)
-        print(f"Bought {bought_shares} shares of VST at {bought_price:.2f} on {datetime.now().strftime('%Y-%m-%d')}")
+        print(f"Bought {bought_shares} shares of VST at {bought_price:.2f} on {datetime.now().strftime('%Y-%m-%d %I:%M %p %Z')}")
 
     # Sell all shares if conditions are met
     shares_owned, cash_available = sell_all_shares(opening_price, stock_price, shares_owned, cash_available)
