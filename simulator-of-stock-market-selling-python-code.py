@@ -84,7 +84,6 @@ def buy_all_available_shares(opening_price, current_price, cash_available):
 def sell_all_shares(opening_price, current_price, shares_owned, cash_available):
     global max_price_increase     # Use the global max_price_increase variable
 
-    shares_sold = 0
     # Calculate the maximum price increase since purchase
     max_price_increase = max(max_price_increase, current_price - bought_price)
 
