@@ -39,21 +39,20 @@ def simulate_opening_price():
 def simulate_closing_price():
     return 33.21  # Fixed closing price for "VST"
 
-# Define a function to buy up to 50 shares if there's enough cash
-def buy_up_to_50_shares(opening_price, current_price, cash_available):
-    # Define the factor to subtract as a decimal (0.5% decrease)
-    factor_to_subtract = 0.995
 
-    # Calculate the maximum number of shares that can be bought with available cash (up to 50 shares)
-    max_shares = min(50, cash_available // current_price)
+# Define a function to buy as many shares as possible with available cash
+def buy_all_available_shares(opening_price, current_price, cash_available):
+    # Calculate the maximum number of shares that can be bought with available cash
+    max_shares = cash_available // current_price
 
-    # Buy condition: Buy up to 50 shares when the current price is 0.5% below the opening price
-    if (max_shares > 0) and (current_price <= opening_price * factor_to_subtract):
+    # Buy condition: Buy as many shares as possible when the current price is below the opening price
+    if max_shares > 0 and current_price <= opening_price:
         cash_spent = max_shares * current_price  # Calculate the total cost
         cash_available -= cash_spent  # Deduct the purchase cost
         return max_shares, cash_available  # Return updated values
     else:
         return 0, cash_available  # Return 0 shares and unchanged cash
+
 
 # Define a function to sell all shares of stock
 def sell_all_shares(opening_price, current_price, shares_owned, cash_available):
@@ -94,7 +93,7 @@ while True:  # Infinite loop
     print(f"Currently own {shares_owned} shares of VST valued at ${total_value:.2f}")
 
     # Buy up to 50 shares if conditions are met
-    bought_shares, cash_available = buy_up_to_50_shares(opening_price, stock_price, cash_available)
+    bought_shares, cash_available = buy_all_available_shares(opening_price, stock_price, cash_available)
 
     if bought_shares > 0:
         bought_price = stock_price
