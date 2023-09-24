@@ -61,6 +61,7 @@ def simulate_opening_price():
 def simulate_closing_price():
     return 33.21  # Fixed closing price for "VST"
 
+
 # Define a function to buy as many shares as possible with available cash
 def buy_all_available_shares(opening_price, current_price, cash_available):
     if cash_available <= 0:
@@ -73,12 +74,12 @@ def buy_all_available_shares(opening_price, current_price, cash_available):
     if max_shares > 0 and current_price <= opening_price:
         cash_spent = max_shares * current_price  # Calculate the total cost
         cash_available -= cash_spent  # Deduct the purchase cost
-        global shares_owned, shares_bought
+        global shares_owned
         shares_owned += max_shares  # Update the number of shares owned
-        shares_bought += max_shares  # Update the number of shares bought
         return max_shares, cash_available  # Return updated values
     else:
         return 0, cash_available  # Return 0 shares and unchanged cash
+
 
 # Define a function to sell all shares of stock
 def sell_all_shares(opening_price, current_price, shares_owned, cash_available):
@@ -92,10 +93,12 @@ def sell_all_shares(opening_price, current_price, shares_owned, cash_available):
         cash_gained = shares_owned * current_price  # Calculate the selling proceeds
         cash_available += cash_gained  # Add the selling proceeds to cash
 
+        global shares_sold
         shares_sold += shares_owned  # Update the number of shares sold
         shares_owned = 0  # Set shares owned to 0 after selling all shares
         log_signal("Sold", current_price, shares_sold, cash_available)
     return shares_owned, cash_available
+
 
 # Main program loop
 while True:  # Infinite loop
