@@ -3,6 +3,8 @@ from datetime import datetime, timezone, timedelta
 import time
 import pytz
 
+global shares_owned
+
 # Initialize the initial stock price, max price increase, cash available, bought price, and shares owned
 stock_price = 32.88
 max_price_increase = 0
@@ -74,7 +76,7 @@ def sell_all_shares(opening_price, current_price, shares_owned, cash_available):
     if (current_price >= bought_price * 1.01) and shares_owned > 0:
         cash_gained = shares_owned * current_price  # Calculate the selling proceeds
         cash_available += cash_gained  # Add the selling proceeds to cash
-        global shares_owned
+
         shares_owned = 0  # Set shares owned to 0 after selling all shares
         log_signal("Sold", current_price, shares_owned, cash_available)
     return shares_owned, cash_available
