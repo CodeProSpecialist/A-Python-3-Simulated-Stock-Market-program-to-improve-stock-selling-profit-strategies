@@ -68,9 +68,15 @@ while True:  # Infinite loop
     opening_price = simulate_opening_price()
     closing_price = simulate_closing_price()
 
+    print("")
+    print("------------------------------------------------------------------------------------------------------")
+    print("")
     # Print current price and cash available
     print(f"Current Price of VST: {stock_price:.2f}     |     Cash Available: {cash_available:.2f}")
     print(f"Currently own {shares_owned} shares of VST valued at ${(shares_owned * stock_price):.2f}")
+    print("")
+    print("------------------------------------------------------------------------------------------------------")
+
 
     # Buy 1 share if conditions are met
     shares_owned, cash_available = buy_stock(opening_price, stock_price, cash_available, shares_owned)
