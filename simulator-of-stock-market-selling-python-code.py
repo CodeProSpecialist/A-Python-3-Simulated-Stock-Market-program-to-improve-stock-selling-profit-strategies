@@ -4,9 +4,10 @@ import time
 import pytz
 
 # Declare global variables
-global shares_owned, shares_sold
+global shares_owned, shares_sold, opening_price
 
 # Initialize the initial stock price, max price increase, cash available, bought price, and shares owned
+opening_price = 33.07
 stock_price = 33.08
 max_price_increase = 0
 cash_available = 37449.57  # Start with $37,449.57 in cash
@@ -80,7 +81,7 @@ def buy_all_available_shares(opening_price, current_price, cash_available):
         return 0, cash_available  # Return 0 shares and unchanged cash
 
 # Define a function to sell all shares of stock
-def sell_all_shares(opening_price, current_price, shares_owned, cash_available):
+def sell_all_shares(opening_price, current_price, shares_owned, cash_available, shares_sold):
     global max_price_increase  # Use the global max_price_increase variable
 
     # Calculate the maximum price increase since purchase
