@@ -5,8 +5,8 @@ import time
 # Initialize the initial stock price, max price increase, cash available, bought price, and shares owned
 stock_price = 33.22
 max_price_increase = 0
-cash_available = 10000  # Replace with your actual cash value
-bought_price = 34.17  # Initial bought price
+cash_available = 35000  # Start with $35,000 in cash
+bought_price = 32.75  # Initial bought price
 shares_owned = 50  # Start with 50 shares
 
 # Open a text file for logging buy and sell signals
@@ -14,7 +14,7 @@ log_file = open("log-file-of-buy-and-sell-signals.txt", "a")
 
 # Define a function to log buy and sell signals
 def log_signal(signal, price, shares):
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.now().strftime("%Y-%m-%d")
     log_file.write(f"{timestamp}: {signal} {shares} VST at {price:.2f}\n")
 
 # Define a function to simulate a change in stock price
@@ -27,24 +27,27 @@ def simulate_price_change(current_price):
 
 # Define a function to simulate the opening price (fixed)
 def simulate_opening_price():
-    return 33.22  # Fixed opening price for "VST"
+    return 33.22  # Fixed opening price for " VST"
 
 # Define a function to simulate the closing price (fixed)
 def simulate_closing_price():
     return 33.21  # Fixed closing price for "VST"
 
-# Define a function to buy 1 share of stock
-def buy_stock(opening_price, current_price, cash_available, shares_owned):
+# Define a function to buy up to 50 shares if there's enough cash
+def buy_up_to_50_shares(opening_price, current_price, cash_available):
     # Define the factor to subtract as a decimal (0.5% decrease)
     factor_to_subtract = 0.995
 
-    # Buy condition: Buy 1 share when the current price is 0.5% below the opening price
-    if (cash_available >= current_price) and (current_price <= opening_price * factor_to_subtract):
-        shares_owned += 1  # Increment shares owned
-        cash_available -= current_price  # Deduct the purchase cost
-        return shares_owned, cash_available  # Return updated values
+    # Calculate the maximum number of shares that can be bought with available cash (up to 50 shares)
+    max_shares = min(50, cash_available // current_price)
+
+    # Buy condition: Buy up to 50 shares when the current price is 0.5% below the opening price
+    if (max_shares > 0) and (current_price <= opening_price * factor_to_subtract):
+        cash_spent = max_shares * current_price  # Calculate the total cost
+        cash_available -= cash_spent  # Deduct the purchase cost
+        return max_shares, cash_available  # Return updated values
     else:
-        return shares_owned, cash_available  # Return unchanged values
+        return 0, cash_available  # Return 0 shares and unchanged cash
 
 # Define a function to sell all shares of stock
 def sell_all_shares(opening_price, current_price, shares_owned, cash_available):
@@ -57,7 +60,7 @@ def sell_all_shares(opening_price, current_price, shares_owned, cash_available):
     if (current_price >= bought_price * 1.01) and shares_owned > 0:
         cash_available += shares_owned * current_price  # Add the selling proceeds to cash
         log_signal("Sold", current_price, shares_owned)
-        print(f"Sold {shares_owned} shares of VST at {current_price:.2f} each on {datetime.now()}")
+        print(f"Sold {shares_owned} shares of VST at {current_price:.2f} each on {datetime.now().strftime('%Y-%m-%d')}")
         shares_owned = 0  # Set shares owned to 0 after selling all shares
 
     return shares_owned, cash_available
@@ -68,23 +71,17 @@ while True:  # Infinite loop
     opening_price = simulate_opening_price()
     closing_price = simulate_closing_price()
 
-    print("")
-    print("------------------------------------------------------------------------------------------------------")
-    print("")
     # Print current price and cash available
     print(f"Current Price of VST: {stock_price:.2f}     |     Cash Available: {cash_available:.2f}")
     print(f"Currently own {shares_owned} shares of VST valued at ${(shares_owned * stock_price):.2f}")
-    print("")
-    print("------------------------------------------------------------------------------------------------------")
 
+    # Buy up to 50 shares if conditions are met
+    bought_shares, cash_available = buy_up_to_50_shares(opening_price, stock_price, cash_available)
 
-    # Buy 1 share if conditions are met
-    shares_owned, cash_available = buy_stock(opening_price, stock_price, cash_available, shares_owned)
-
-    if shares_owned > 0:
+    if bought_shares > 0:
         bought_price = stock_price
-        log_signal("Bought", bought_price, 1)
-        print(f"Bought 1 share of VST at {bought_price:.2f} on {datetime.now()}")
+        log_signal("Bought", bought_price, bought_shares)
+        print(f"Bought {bought_shares} shares of VST at {bought_price:.2f} on {datetime.now().strftime('%Y-%m-%d')}")
 
     # Sell all shares if conditions are met
     shares_owned, cash_available = sell_all_shares(opening_price, stock_price, shares_owned, cash_available)
