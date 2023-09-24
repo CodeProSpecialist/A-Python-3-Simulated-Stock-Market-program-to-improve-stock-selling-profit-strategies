@@ -82,7 +82,13 @@ while True:  # Infinite loop
     print("----------------------------------------------------------------------------------------------------------------------------")
     print(f"Current Price of VST: {stock_price:.2f}     |     Cash Available: {cash_available:.2f}")
     print("----------------------------------------------------------------------------------------------------------------------------")
-    print(f"Currently own {shares_owned} shares of VST valued at ${(shares_owned * stock_price):.2f}")
+
+    # Update the display for the number of shares owned and their value
+    if shares_owned > 0:
+        total_value = shares_owned * stock_price
+        print(f"Currently own {shares_owned} shares of VST valued at ${total_value:.2f}")
+    else:
+        print(f"Currently own 0 shares of VST valued at $0.00")
 
     # Buy up to 50 shares if conditions are met
     bought_shares, cash_available = buy_up_to_50_shares(opening_price, stock_price, cash_available)
