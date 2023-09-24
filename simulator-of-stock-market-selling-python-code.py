@@ -17,6 +17,11 @@ def log_signal(signal, price, shares):
     timestamp = datetime.now().strftime("%Y-%m-%d %I:%M %p %Z")
     log_file.write(f"{timestamp}: {signal} {shares} VST at {price:.2f}\n")
 
+# Define a function to update the number of shares owned and their value
+def update_shares_value():
+    global shares_owned
+    total_value = shares_owned * stock_price
+    return shares_owned, total_value
 
 # Define a function to simulate a change in stock price
 def simulate_price_change(current_price):
@@ -26,16 +31,13 @@ def simulate_price_change(current_price):
     new_price = current_price * (1 + percent_change)
     return new_price
 
-
 # Define a function to simulate the opening price (fixed)
 def simulate_opening_price():
     return 33.22  # Fixed opening price for " VST"
 
-
 # Define a function to simulate the closing price (fixed)
 def simulate_closing_price():
     return 33.21  # Fixed closing price for "VST"
-
 
 # Define a function to buy up to 50 shares if there's enough cash
 def buy_up_to_50_shares(opening_price, current_price, cash_available):
@@ -53,7 +55,6 @@ def buy_up_to_50_shares(opening_price, current_price, cash_available):
     else:
         return 0, cash_available  # Return 0 shares and unchanged cash
 
-
 # Define a function to sell all shares of stock
 def sell_all_shares(opening_price, current_price, shares_owned, cash_available):
     global max_price_increase  # Use the global max_price_increase variable
@@ -69,7 +70,6 @@ def sell_all_shares(opening_price, current_price, shares_owned, cash_available):
         shares_owned = 0  # Set shares owned to 0 after selling all shares
 
     return shares_owned, cash_available
-
 
 # Main program loop
 while True:  # Infinite loop
@@ -89,12 +89,9 @@ while True:  # Infinite loop
     print(f"Current Price of VST: {stock_price:.2f}     |     Cash Available: {cash_available:.2f}")
     print("----------------------------------------------------------------------------------------------------------------------------")
 
-    # Update the display for the number of shares owned and their value
-    if shares_owned > 0:
-        total_value = shares_owned * stock_price
-        print(f"Currently own {shares_owned} shares of VST valued at ${total_value:.2f}")
-    else:
-        print(f"Currently own 0 shares of VST valued at $0.00")
+    # Update the number of shares owned and their value
+    shares_owned, total_value = update_shares_value()
+    print(f"Currently own {shares_owned} shares of VST valued at ${total_value:.2f}")
 
     # Buy up to 50 shares if conditions are met
     bought_shares, cash_available = buy_up_to_50_shares(opening_price, stock_price, cash_available)
