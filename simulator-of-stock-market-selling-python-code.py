@@ -39,7 +39,6 @@ def simulate_opening_price():
 def simulate_closing_price():
     return 33.21  # Fixed closing price for "VST"
 
-
 # Define a function to buy as many shares as possible with available cash
 def buy_all_available_shares(opening_price, current_price, cash_available):
     # Calculate the maximum number of shares that can be bought with available cash
@@ -53,7 +52,6 @@ def buy_all_available_shares(opening_price, current_price, cash_available):
     else:
         return 0, cash_available  # Return 0 shares and unchanged cash
 
-
 # Define a function to sell all shares of stock
 def sell_all_shares(opening_price, current_price, shares_owned, cash_available):
     global max_price_increase  # Use the global max_price_increase variable
@@ -63,7 +61,8 @@ def sell_all_shares(opening_price, current_price, shares_owned, cash_available):
 
     # Condition 1: Sell when the price increases by 1% or more than the bought price
     if (current_price >= bought_price * 1.01) and shares_owned > 0:
-        cash_available += shares_owned * current_price  # Add the selling proceeds to cash
+        cash_gained = shares_owned * current_price  # Calculate the selling proceeds
+        cash_available += cash_gained  # Add the selling proceeds to cash
         log_signal("Sold", current_price, shares_owned)
         print(f"Sold {shares_owned} shares of VST at {current_price:.2f} each on {datetime.now().strftime('%Y-%m-%d %I:%M %p %Z')}")
         shares_owned = 0  # Set shares owned to 0 after selling all shares
@@ -92,7 +91,7 @@ while True:  # Infinite loop
     shares_owned, total_value = update_shares_value()
     print(f"Currently own {shares_owned} shares of VST valued at ${total_value:.2f}")
 
-    # Buy up to 50 shares if conditions are met
+    # Buy as many shares as possible if conditions are met
     bought_shares, cash_available = buy_all_available_shares(opening_price, stock_price, cash_available)
 
     if bought_shares > 0:
