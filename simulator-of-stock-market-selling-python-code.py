@@ -1,6 +1,7 @@
 import random
 from datetime import datetime, timezone, timedelta
 import time
+import pytz  # Import pytz for timezone handling
 
 # Initialize the initial stock price, max price increase, cash available, bought price, and shares owned
 stock_price = 33.22
@@ -14,8 +15,13 @@ log_file = open("log-file-of-buy-and-sell-signals.txt", "a")
 
 # Define a function to log buy and sell signals
 def log_signal(signal, price, shares):
-    timestamp = datetime.now().strftime("%Y-%m-%d %I:%M %p %Z")
-    log_file.write(f"{timestamp}: {signal} {shares} VST at {price:.2f}\n")
+    # Get the current time in the US/Eastern timezone
+    now = datetime.now(pytz.timezone('US/Eastern'))
+    current_time_str = now.strftime("Eastern Time | %I:%M:%S %p | %m-%d-%Y |")
+
+    # Log the signal with the current time and cash balance
+    log_message = f"{current_time_str} {signal} {shares} VST at {price:.2f} | Cash Available: {cash_available:.2f}\n"
+    log_file.write(log_message)
 
 # Define a function to update the number of shares owned and their value
 def update_shares_value():
@@ -64,7 +70,7 @@ def sell_all_shares(opening_price, current_price, shares_owned, cash_available):
         cash_gained = shares_owned * current_price  # Calculate the selling proceeds
         cash_available += cash_gained  # Add the selling proceeds to cash
         log_signal("Sold", current_price, shares_owned)
-        print(f"Sold {shares_owned} shares of VST at {current_price:.2f} each on {datetime.now().strftime('%Y-%m-%d %I:%M %p %Z')}")
+        print(f"Sold {shares_owned} shares of VST at {current_price:.2f} on {datetime.now().strftime('%Y-%m-%d %I:%M %p %Z')}")
         shares_owned = 0  # Set shares owned to 0 after selling all shares
 
     return shares_owned, cash_available
@@ -78,9 +84,12 @@ while True:  # Infinite loop
     # Print separation line
     print("----------------------------------------------------------------------------------------------------------------------------")
 
-    # Print local time in Eastern time zone
-    eastern_time = datetime.now(timezone.utc) + timedelta(hours=-5)  # Eastern time is UTC-5
-    print(f"Eastern Time: {eastern_time.strftime('%I:%M %p')}")
+    # Get the current time in the US/Eastern timezone
+    now = datetime.now(pytz.timezone('US/Eastern'))
+    current_time_str = now.strftime("Eastern Time | %I:%M:%S %p | %m-%d-%Y |")
+
+    # Print current time
+    print(current_time_str)
 
     # Print current price and cash available with neat separation
     print("----------------------------------------------------------------------------------------------------------------------------")
@@ -97,7 +106,7 @@ while True:  # Infinite loop
     if bought_shares > 0:
         bought_price = stock_price
         log_signal("Bought", bought_price, bought_shares)
-        print(f"Bought {bought_shares} shares of VST at {bought_price:.2f} on {datetime.now().strftime('%Y-%m-%d %I:%M %p %Z')}")
+        print(f"Bought {bought_shares} shares of VST at {bought_price:.2f} on {current_time_str}")
 
     # Sell all shares if conditions are met
     shares_owned, cash_available = sell_all_shares(opening_price, stock_price, shares_owned, cash_available)
