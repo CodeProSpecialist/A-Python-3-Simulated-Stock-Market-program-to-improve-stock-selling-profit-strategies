@@ -6,7 +6,7 @@ import time
 stock_price = 33.22
 max_price_increase = 0
 cash_available = 10000  # Replace with your actual cash value
-bought_price = 33.17  # Initial bought price
+bought_price = 34.17  # Initial bought price
 shares_owned = 50  # Start with 50 shares
 
 # Open a text file for logging buy and sell signals
